@@ -23,6 +23,7 @@ from google.colab import files
 import io
 import os
 import json
+from requests_oauthlib import OAuth2Session
 
 def ai_model(file_path, file_name, cohort):
 
@@ -647,72 +648,8 @@ def ai_model(file_path, file_name, cohort):
 
     """# Upload user_data to Excel Sheet"""
 
-uploaded = files.upload()
-file_name = next(iter(uploaded))  # This gets the name of the uploaded file
-pdf_data = io.BytesIO(uploaded[file_name])
-pdf_path = f"/content/{file_name}"
-
-# Function to get access token
-def get_access_token(client_id, client_secret, tenant_id):
-    authority = f'https://login.microsoftonline.com/{tenant_id}'
-    scope = ['https://graph.microsoft.com/.default']
-
-    app = ConfidentialClientApplication(
-        client_id, authority=authority,
-        client_credential=client_secret
-    )
-
-    token_response = app.acquire_token_for_client(scopes=scope)
-    return token_response.get('access_token', None)
-
-# Function to upload file to SharePoint
-def upload_file_to_sharepoint(access_token, site_id, folder_path, file_name, file_data):
-    endpoint = f'https://graph.microsoft.com/v1.0/sites/{site_id}/drive/root:/{folder_path}/{file_name}:/content'
-    headers = {
-        'Authorization': 'Bearer ' + access_token,
-        'Content-Type': 'application/octet-stream'
-    }
-
-    response = requests.put(endpoint, headers=headers, data=file_data)
-
-    # Check for successful response
-    if response.status_code == 201 or response.status_code == 200:
-        # Here you can extract the file path or SharePoint URL as needed
-        file_path = response.json().get('@microsoft.graph.downloadUrl')
-        return file_path
-    else:
-        raise Exception(f"Failed to upload file: {response.json()}")
-
-# Example usage
-client_id = '6ab526e0-c314-4736-bb76-536dc241fe5e'
-client_secret = '0ZF8Q~afzsm0T4LQ9jEGJT6s26XZZlp1CKA1idzA'
-tenant_id = '825c9d58-d758-4658-a35a-49b607ca99a5'
-site_id = 'f9ac8ea8-56b1-4bdb-99d6-64efa51997df'
-folder_path = 'Documents/AI projects'
-file_name = next(iter(uploaded))
-file_data = open(file_name, 'rb').read()
-
-# Assuming 'uploaded' is the dictionary returned from files.upload() and contains your PDF data
-uploaded = files.upload()
-file_name = next(iter(uploaded))  # This gets the name of the uploaded file
-file_data = open(file_name, 'rb').read()
-
-# Get the access token
-access_token = get_access_token(client_id, client_secret, tenant_id)
-
-# Upload the file and get the SharePoint path
-if access_token:
-    pdf_path = upload_file_to_sharepoint(access_token, site_id, folder_path, file_name, file_data)
-    print(f'File uploaded to SharePoint. pdf_path: {pdf_path}')
-else:
-    print('Could not get access token')
-
-
-    """# save file to SharePoint"""
-
-def get_access_token(client_id, client_secret, tenant_id):
+def get_access_token(client_id, client_secret, tenant_id, scope):
     authority = f"https://login.microsoftonline.com/{tenant_id}"
-    scope = ["https://graph.microsoft.com/.default"]
     token_url = f"{authority}/oauth2/v2.0/token"
 
     token_data = {
@@ -728,8 +665,23 @@ def get_access_token(client_id, client_secret, tenant_id):
     else:
         raise Exception(f"Error getting token: {token_r.text}")
 
-def read_folders_from_documents(access_token, site_id):
-    endpoint = f"https://graph.microsoft.com/v1.0/sites/{site_id}/drive/root/children/documents/children"
+def upload_file_to_sharepoint(access_token, site_id, folder_path, file_name, file_data):
+    endpoint = f'https://graph.microsoft.com/v1.0/sites/{site_id}/drive/root:/{folder_path}/{file_name}:/content'
+    headers = {
+        'Authorization': 'Bearer ' + access_token,
+        'Content-Type': 'application/octet-stream'
+    }
+
+    response = requests.put(endpoint, headers=headers, data=file_data)
+
+    if response.status_code == 201 or response.status_code == 200:
+        file_path = response.json().get('@microsoft.graph.downloadUrl')
+        return file_path
+    else:
+        raise Exception(f"Failed to upload file: {response.json()}")
+
+def read_folders_from_site(access_token, site_id, path=''):
+    endpoint = f"https://graph.microsoft.com/v1.0/sites/{site_id}/drive/items/{path}/children"
     headers = {
         'Authorization': f'Bearer {access_token}',
         'Content-Type': 'application/json'
@@ -737,15 +689,34 @@ def read_folders_from_documents(access_token, site_id):
 
     response = requests.get(endpoint, headers=headers)
     if response.status_code == 200:
-        folders = []
-        for item in response.json().get('value', []):
-            # Check if the item is a folder
-            if 'folder' in item:
-                folders.append(item)
+        folders = [item for item in response.json().get('value', []) if 'folder' in item]
         return folders
     else:
         raise Exception(f"Error reading folders: {response.text}")
 
-access_token = get_access_token(client_id, client_secret, tenant_id)
-folders = read_folders_from_documents(access_token, site_id)
+# Define your client_id, client_secret, tenant_id, site_id, folder_path
+client_id = '6ab526e0-c314-4736-bb76-536dc241fe5e'
+client_secret = '0ZF8Q~afzsm0T4LQ9jEGJT6s26XZZlp1CKA1idzA'
+tenant_id = '825c9d58-d758-4658-a35a-49b607ca99a5'
+site_id = 'f9ac8ea8-56b1-4bdb-99d6-64efa51997df'
+folder_path = 'Documents/AI projects'
+file_name = next(iter(uploaded))
+file_data = open(file_name, 'rb').read()
+
+# Assuming 'uploaded' is the dictionary returned from files.upload() and contains your PDF data
+uploaded = files.upload()
+file_name = next(iter(uploaded))  
+file_data = open(file_name, 'rb').read()
+
+scope = ['https://graph.microsoft.com/.default']
+access_token = get_access_token(client_id, client_secret, tenant_id, scope)
+
+if access_token:
+    pdf_path = upload_file_to_sharepoint(access_token, site_id, folder_path, file_name, file_data)
+    print(f'File uploaded to SharePoint. pdf_path: {pdf_path}')
+else:
+    print('Could not get access token')
+
+# Read folders from the specified site and path
+folders = read_folders_from_site(access_token, site_id, path='documents')
 print(json.dumps(folders, indent=2))
