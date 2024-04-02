@@ -692,6 +692,11 @@ folder_path = 'Documents/AI projects'
 file_name = next(iter(uploaded))
 file_data = open(file_name, 'rb').read()
 
+# Assuming 'uploaded' is the dictionary returned from files.upload() and contains your PDF data
+uploaded = files.upload()
+file_name = next(iter(uploaded))  # This gets the name of the uploaded file
+file_data = open(file_name, 'rb').read()
+
 # Get the access token
 access_token = get_access_token(client_id, client_secret, tenant_id)
 
