@@ -443,7 +443,7 @@ def ai_model(file_path, file_name, cohort):
         site_id = 'f9ac8ea8-56b1-4bdb-99d6-64efa51997df'
 
         # Folder in SharePoint where the new folder will be created
-        base_folder_path = 'Documents/AI projects'
+        base_folder_path = 'Documents/AI Projects'
 
         # Get the access token
         access_token = get_access_token(client_id, client_secret, tenant_id)
