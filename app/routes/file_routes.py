@@ -31,8 +31,8 @@ def upload_file():
         except Exception as e:
             return jsonify({'error': f'Failed to save file: {e}'}), 500
 
-        process = Process(target=manipulate_file, args=(filename, file_path, cohort))
-        processes.append(process)
+        # process = Process(target=manipulate_file, args=(filename, file_path, cohort))
+        # processes.append(process)
 
     # Start and join each process sequentially
     for process in processes:
