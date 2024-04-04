@@ -64,20 +64,15 @@ def is_valid_pdf_extension(filename):
 
 
 def upload_pdf_to_s3(file_path, file_name):
-    AWS_S3_BUCKET_NAME = os.getenv('AWS_S3_BUCKET_NAME')
-    AWS_REGION = os.getenv('AWS_REGION')
-    AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
-    AWS_SECRET_KEY = os.getenv('AWS_SECRET_KEY')
     file_path = os.path.join("uploads", file_name)
-
     try:
         s3_client = boto3.client(
             service_name='s3',
-            region_name=AWS_REGION,
-            aws_access_key_id=AWS_ACCESS_KEY,
-            aws_secret_access_key=AWS_SECRET_KEY
+            region_name= os.getenv('AWS_REGION'),
+            aws_access_key_id= os.getenv('AWS_ACCESS_KEY'),
+            aws_secret_access_key= os.getenv('AWS_SECRET_KEY')
         )
-        response = s3_client.upload_file(file_path, AWS_S3_BUCKET_NAME, file_name)
+        response = s3_client.upload_file(file_path, os.getenv('AWS_S3_BUCKET_NAME'), file_name)
         print(f'upload_log_to_aws response: {response}')
     except Exception as e:
         print(f"Error uploading file '{file_name}' to S3 bucket : {e}")
