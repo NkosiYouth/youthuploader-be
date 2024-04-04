@@ -64,7 +64,6 @@ def is_valid_pdf_extension(filename):
 
 
 def upload_pdf_to_s3(file_path, file_name):
-    # Access the environment variables
     AWS_S3_BUCKET_NAME = os.getenv('AWS_S3_BUCKET_NAME')
     AWS_REGION = os.getenv('AWS_REGION')
     AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
