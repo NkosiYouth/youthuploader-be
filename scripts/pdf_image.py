@@ -4,6 +4,8 @@ import os
 
 def convert_pdf_to_images(pdf_path):
     # Open the PDF file using PyMuPDF
+    print("㊙️ PDF PATH")
+    print(pdf_path)
     pdf = fitz.open(pdf_path)
     images = []
 

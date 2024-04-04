@@ -57,21 +57,40 @@ class User:
     def get_all_users(params=None):
         mongo = User._get_mongo()
         query = {}  # Initialize an empty query
+        print(params)
         if params:
             query.update(params)  # Update query with provided parameters
+            if 'isValidated' in params:
+                query['isValidated'] = params['isValidated'] == 'true'
+
 
         users = list(mongo.db.users.find(query))
 
+        # Convert ObjectId to string for each user
         for user in users:
             user['_id'] = str(user['_id'])
 
         return users
 
+
     @staticmethod
     def update_user(user_id, update_data):
         mongo = User._get_mongo()
-        result = mongo.db.users.update_one({'_id': ObjectId(user_id)}, {'$set': update_data})
-        return result.modified_count
+
+        # Find the user document by user_id
+        user = mongo.db.users.find_one({'_id': ObjectId(user_id)})
+
+        if user:
+            # Update the user document with new data
+            user.update(**update_data)
+
+            # Save the updated user document
+            result = mongo.db.users.replace_one({'_id': ObjectId(user_id)}, user)
+
+            return True
+        else:
+            # User not found
+            return False
 
     @staticmethod
     def delete_user(user_id):

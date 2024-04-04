@@ -36,13 +36,7 @@ def upload_file():
         except Exception as e:
             return jsonify({'error': f'Failed to save file: {e}'}), 500
 
-        process = Process(target=ai_model_script.ai_model, args=(filename, file_path, cohort))
-        processes.append(process)
 
-    # # Start and join each process sequentially
-    for process in processes:
-        process.start()
-        process.join()
 
     # Collect information about uploaded files
     for uploaded_file in uploaded_files:
@@ -52,8 +46,14 @@ def upload_file():
         print(file_path)
         print(filename)
         upload_pdf_to_s3(file_path, filename)
+        process = Process(target=ai_model_script.ai_model, args=(file_path, filename, cohort))
+        processes.append(process)
         uploaded_files_info.append({'file_name': filename, 'file_path': file_path, 'cohort': cohort})
 
+    # # Start and join each process sequentially
+    for process in processes:
+        process.start()
+        # process.join()
     return jsonify({'message': 'Files uploaded successfully', 'files': uploaded_files_info}), 201
 
 # Define other file-related routes as needed...
