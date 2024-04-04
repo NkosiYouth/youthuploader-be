@@ -4,6 +4,8 @@ import json
 import requests
 import os
 import shutil
+from dotenv import load_dotenv
+load_dotenv()
 
 from .pdf_image import convert_pdf_to_images, save_images_to_files
 
@@ -22,6 +24,8 @@ from .user_data import get_user_output_data
 from .split_rename_pdf import extract_page_names, update_page_names_with_user, split_pdf_into_pages, merge_pages_by_name
 
 from .sharepoint import upload_file_to_sharepoint, upload_folder_to_sharepoint, create_folder_in_sharepoint, get_access_token
+
+from .delete_folder import delete_file_or_folder
 
 from app.models import User
 
@@ -149,10 +153,10 @@ def ai_model(file_path, file_name, cohort):
     # ㊙️ Upload to SharePoint
     ##################################
     # Credentials and SharePoint information
-    client_id = '6ab526e0-c314-4736-bb76-536dc241fe5e'
-    client_secret = '0ZF8Q~afzsm0T4LQ9jEGJT6s26XZZlp1CKA1idzA'
-    tenant_id = '825c9d58-d758-4658-a35a-49b607ca99a5'
-    site_id = 'f9ac8ea8-56b1-4bdb-99d6-64efa51997df'
+    client_id = os.getenv('CLIENT_ID')
+    client_secret = os.getenv('CLIENT_SECRET')
+    tenant_id = os.getenv('TENANT_ID')
+    site_id = os.getenv('SITE_ID')
 
     # Folder in SharePoint where the new folder will be created
     base_folder_path = 'Documents/AI projects'
@@ -195,15 +199,14 @@ def ai_model(file_path, file_name, cohort):
     ##################################
     # ㊙️ Delete Files
     ##################################
-    try:
-        # Delete the folders and all their contents recursively
-        delet_1 = folder_name_to_create
-        delet_2 = os.path.join('uploads', file_name)
-        delet_3 = storage_path
-        shutil.rmtree(delet_1)
-        shutil.rmtree(delet_2)
-        shutil.rmtree(delet_3)
-        print("Folders and all their contents have been deleted successfully.")
-    except Exception as e:
-        print(f"Error deleting folders: {e}")
+    # Delete the folders and all their contents recursively
+    delete_path = os.path.join('uploads', file_name)
+    delete_file_or_folder(delete_path)
+
+    delete_path = os.path.join('content', file_name)
+    delete_file_or_folder(delete_path)
+
+    delete_file_or_folder(local_folder_path)
+
+    print("Folders and all their contents have been deleted successfully.")
 
