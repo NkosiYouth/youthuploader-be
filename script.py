@@ -1,8 +1,8 @@
-from scripts import ai_model_script
+from scripts import ai_model_script, delete_folder
 import os
 
 # file_name = 'A1 9904060525080 copy.pdf'
-file_name = 'a1-short.pdf'
+file_name = 'a1-short'
 
 cohort = 'data'
 
