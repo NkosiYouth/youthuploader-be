@@ -153,10 +153,10 @@ def ai_model(file_path, file_name, cohort):
     # ㊙️ Upload to SharePoint
     ##################################
     # Credentials and SharePoint information
-    client_id = os.getenv('CLIENT_ID')
-    client_secret = os.getenv('CLIENT_SECRET')
-    tenant_id = os.getenv('TENANT_ID')
-    site_id = os.getenv('SITE_ID')
+    client_id = '6ab526e0-c314-4736-bb76-536dc241fe5e'
+    client_secret = '0ZF8Q~afzsm0T4LQ9jEGJT6s26XZZlp1CKA1idzA'
+    tenant_id = '825c9d58-d758-4658-a35a-49b607ca99a5'
+    site_id = 'f9ac8ea8-56b1-4bdb-99d6-64efa51997df'
 
     # Folder in SharePoint where the new folder will be created
     base_folder_path = 'Documents/AI projects'
