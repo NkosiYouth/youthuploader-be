@@ -51,3 +51,17 @@ def consolidate_ocr_results_based_on_digitization(data):
         consolidated_text = ' '.join(non_digital_ocr_texts)
 
     return consolidated_text
+
+def get_ocr_text_for_document(data, document_name):
+    ocr_texts = []
+
+    for entry in data:
+        if not (isinstance(entry, (list, tuple)) and len(entry) >= 3):
+            continue
+
+        image_classification = entry[2]
+        if isinstance(image_classification, dict) and image_classification.get('document_name') == document_name:
+            ocr_text = entry[1] if isinstance(entry[1], str) else ""
+            ocr_texts.append(ocr_text)
+
+    return " ".join(ocr_texts)  # Consolidate all OCR texts for the given document_name
