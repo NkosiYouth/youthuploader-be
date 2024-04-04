@@ -44,26 +44,22 @@ def create_folder_in_sharepoint(access_token, site_id, folder_path):
     else:
         raise Exception(f"Failed to create folder: {response.json()}")
 
+
 # Function to upload all files in a given local folder to a SharePoint folder
 def upload_folder_to_sharepoint(access_token, site_id, folder_path, local_folder_path):
-    # First, try to create the folder in SharePoint
-    create_folder_in_sharepoint(access_token, site_id, folder_path)
-
-    # Then, iterate over each file in the local folder and upload
-    for root, dirs, files in os.walk(local_folder_path):
-        for file_name in files:
-            file_path = os.path.join(root, file_name)
+    # Iterate over each file in the local folder and upload
+    for file_name in os.listdir(local_folder_path):
+        # Make sure it's a file and not a directory
+        if os.path.isfile(os.path.join(local_folder_path, file_name)):
+            file_path = os.path.join(local_folder_path, file_name)
             with open(file_path, 'rb') as file_data:
-                # Construct the path where the file will live inside SharePoint
-                relative_path = os.path.relpath(root, local_folder_path)
-                sharepoint_file_path = os.path.join(folder_path, relative_path, file_name).replace('\\', '/')
-
-                # Upload the file
+                # Upload the file directly to the folder_path, without appending additional path components
                 try:
-                    pdf_path = upload_file_to_sharepoint(access_token, site_id, sharepoint_file_path, file_name, file_data.read())
-                    print(f'File {file_name} uploaded to SharePoint. PDF Path: {pdf_path}')
+                    file_location = upload_file_to_sharepoint(access_token, site_id, folder_path, file_name, file_data.read())
+                    print(f'File {file_name} uploaded to SharePoint at {file_location}')
                 except Exception as e:
                     print(f'An error occurred while uploading {file_name}: {e}')
+
 
 # Define the function to get an access token for SharePoint
 def get_access_token(client_id, client_secret, tenant_id):
@@ -91,4 +87,6 @@ def get_access_token(client_id, client_secret, tenant_id):
 
     # Return the access token
     return response.json().get("access_token")
+
+
 

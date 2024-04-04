@@ -13,6 +13,8 @@ def create_user():
 @user_bp.route('/users/<user_id>', methods=['PUT'])
 def update_user(user_id):
     data = request.json
+    print(data)
+    print(user_id)
     result = User.update_user(user_id, data)
     if result:
         return jsonify({"message": "User updated successfully"}), 200
@@ -23,7 +25,7 @@ def update_user(user_id):
 @user_bp.route('/users', methods=['GET'])
 def get_all_users():
     query_params = request.args.to_dict()
-    users = User.get_all_users()
+    users = User.get_all_users(query_params)
     return jsonify(users)
 
 # Existing route to get a user by ID

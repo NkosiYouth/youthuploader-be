@@ -3,6 +3,8 @@ import io
 import json
 import requests
 import os
+import shutil
+
 from .pdf_image import convert_pdf_to_images, save_images_to_files
 
 from .image_text_model import image_text_model
@@ -29,7 +31,7 @@ def ai_model(file_path, file_name, cohort):
     ##################################
     # Replace 'path_to_your_pdf_file.pdf' with the actual path to the PDF file
 
-    storage_path = f'content/{file_name}'
+    storage_path =os.path.join('content', file_name)
     pdf_path = f"/uploads/{file_name}"
     pdf_path = file_path
     pdf_data = pdf_path
@@ -182,6 +184,7 @@ def ai_model(file_path, file_name, cohort):
     user = User(**user_data_json)
     user.files = [ file_name ]
     user.cohort = cohort
+    user.isValidated = False
 
     print("㊙️ USER DATA:")
     print(user)
@@ -192,3 +195,15 @@ def ai_model(file_path, file_name, cohort):
     ##################################
     # ㊙️ Delete Files
     ##################################
+    try:
+        # Delete the folders and all their contents recursively
+        delet_1 = folder_name_to_create
+        delet_2 = os.path.join('uploads', file_name)
+        delet_3 = storage_path
+        shutil.rmtree(delet_1)
+        shutil.rmtree(delet_2)
+        shutil.rmtree(delet_3)
+        print("Folders and all their contents have been deleted successfully.")
+    except Exception as e:
+        print(f"Error deleting folders: {e}")
+
