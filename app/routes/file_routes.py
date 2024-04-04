@@ -3,6 +3,9 @@ import os
 from multiprocessing import Process
 import boto3
 from scripts import ai_model_script
+from dotenv import load_dotenv
+
+load_dotenv()
 
 file_bp = Blueprint('file', __name__)
 
@@ -61,10 +64,11 @@ def is_valid_pdf_extension(filename):
 
 
 def upload_pdf_to_s3(file_path, file_name):
-    AWS_S3_BUCKET_NAME = 'youthatwork'
-    AWS_REGION = 'eu-north-1'
-    AWS_ACCESS_KEY = 'AKIA6ODU3VKKXED23UPW'
-    AWS_SECRET_KEY = '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'
+    # Access the environment variables
+    AWS_S3_BUCKET_NAME = os.getenv('AWS_S3_BUCKET_NAME')
+    AWS_REGION = os.getenv('AWS_REGION')
+    AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
+    AWS_SECRET_KEY = os.getenv('AWS_SECRET_KEY')
     file_path = os.path.join("uploads", file_name)
 
     try:
