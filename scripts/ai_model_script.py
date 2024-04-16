@@ -169,7 +169,7 @@ def ai_model(file_path, file_name, cohort):
     folder_name_to_create = os.path.basename(local_folder_path)
 
     # The full folder path on SharePoint where you want the new folder to be created
-    folder_path = os.path.join(base_folder_path, folder_name_to_create).replace('\\', '/')
+    folder_path = os.path.join(base_folder_path, cohort, folder_name_to_create).replace('\\', '/')
 
     # Create the folder and upload files to SharePoint
     if access_token:
