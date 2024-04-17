@@ -6,6 +6,9 @@ from flask_cors import CORS
 from config import Config
 from app.routes.user_routes import user_bp
 from app.routes.file_routes import file_bp
+from app.routes.supervisor_routes import supervisor_bp
+from app.routes.host_routes import host_bp
+
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -21,6 +24,9 @@ mongo = PyMongo(app)
 # Import routes and register blueprints
 app.register_blueprint(user_bp, url_prefix='/api')
 app.register_blueprint(file_bp, url_prefix='/api')
+app.register_blueprint(supervisor_bp, url_prefix='/api')
+app.register_blueprint(host_bp, url_prefix='/api')
+
 
 # @app.route('/')
 # def index():

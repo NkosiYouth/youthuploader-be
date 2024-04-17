@@ -189,6 +189,7 @@ def ai_model(file_path, file_name, cohort):
     user.files = [ file_name ]
     user.cohort = cohort
     user.isValidated = False
+    user.isUpdated = False
 
     print("㊙️ USER DATA:")
     print(user)
