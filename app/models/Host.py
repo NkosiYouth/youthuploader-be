@@ -6,9 +6,8 @@ class Host:
         from app import mongo
         return mongo
 
-    def __init__(self, host_name, host_site_address):
+    def __init__(self, host_name):
         self.host_name = host_name
-        self.host_site_address = host_site_address
 
         if not self.host_name:
             raise ValueError("Host name is mandatory.")
@@ -16,7 +15,6 @@ class Host:
     def to_dict(self):
         return {
             'host_name': self.host_name,
-            'host_site_address': self.host_site_address
         }
 
     def save(self):
@@ -64,3 +62,8 @@ class Host:
         mongo = Host._get_mongo()
         result = mongo.db.hosts.delete_one({'_id': ObjectId(host_id)})
         return result.deleted_count
+
+    @staticmethod
+    def create_unique_index():
+        mongo = Host._get_mongo()
+        mongo.db.hosts.create_index([('host_name', 1)], unique=True)
