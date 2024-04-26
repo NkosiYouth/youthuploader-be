@@ -1,6 +1,6 @@
 from flask import request, jsonify, Blueprint
 import os
-from multiprocessing import Process, current_process
+from multiprocessing import Process
 import boto3
 from scripts import ai_model_script
 from dotenv import load_dotenv
@@ -23,6 +23,10 @@ def retry_process(target, file_path, filename, cohort, retries=5, delay=2):
             attempt += 1
     print(f"Process for '{filename}' failed after {retries} attempts.")
 
+def process_files(uploaded_files_info, cohort):
+    for file_info in uploaded_files_info:
+        retry_process(ai_model_script.ai_model, file_info['file_path'], file_info['file_name'], cohort)
+
 @file_bp.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -34,8 +38,6 @@ def upload_file():
     cohort = request.form.get('cohort')
     if not cohort:
         return jsonify({'error': 'Cohort not provided'}), 400
-
-    processes = []
 
     for uploaded_file in uploaded_files:
         filename = uploaded_file.filename
@@ -51,12 +53,11 @@ def upload_file():
 
         print('㊗️ UPLOADING TO S3')
         upload_pdf_to_s3(file_path, filename)
-        process = Process(target=retry_process, args=(ai_model_script.ai_model, file_path, filename, cohort))
-        processes.append(process)
+
         uploaded_files_info.append({'file_name': filename, 'file_path': file_path, 'cohort': cohort})
 
-    for process in processes:
-        process.start()
+    process = Process(target=process_files, args=(uploaded_files_info, cohort))
+    process.start()
 
     return jsonify({'message': 'Files uploaded successfully', 'files': uploaded_files_info}), 201
 
@@ -65,7 +66,6 @@ def is_valid_pdf_extension(filename):
     return filename.lower().endswith(valid_extensions)
 
 def upload_pdf_to_s3(file_path, file_name):
-    file_path = os.path.join("uploads", file_name)
     try:
         s3_client = boto3.client(
             service_name='s3',
