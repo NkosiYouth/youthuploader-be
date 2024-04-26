@@ -58,6 +58,7 @@ class User:
 
     @staticmethod
     def get_all_users(params=None):
+        print(params)
         mongo = User._get_mongo()
         query = {}  # Initialize an empty query
         print(params)

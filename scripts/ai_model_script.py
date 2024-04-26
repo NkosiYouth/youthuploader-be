@@ -149,37 +149,37 @@ def ai_model(file_path, file_name, cohort):
 
     print(f"The folder path is: {pdf_folder_path}")
 
-    ##################################
-    # ㊙️ Upload to SharePoint
-    ##################################
-    # Credentials and SharePoint information
-    client_id = '6ab526e0-c314-4736-bb76-536dc241fe5e'
-    client_secret = '0ZF8Q~afzsm0T4LQ9jEGJT6s26XZZlp1CKA1idzA'
-    tenant_id = '825c9d58-d758-4658-a35a-49b607ca99a5'
-    site_id = 'f9ac8ea8-56b1-4bdb-99d6-64efa51997df'
+    # ##################################
+    # # ㊙️ Upload to SharePoint
+    # ##################################
+    # # Credentials and SharePoint information
+    # client_id = '6ab526e0-c314-4736-bb76-536dc241fe5e'
+    # client_secret = '0ZF8Q~afzsm0T4LQ9jEGJT6s26XZZlp1CKA1idzA'
+    # tenant_id = '825c9d58-d758-4658-a35a-49b607ca99a5'
+    # site_id = 'f9ac8ea8-56b1-4bdb-99d6-64efa51997df'
 
-    # Folder in SharePoint where the new folder will be created
-    base_folder_path = 'Documents/AI projects'
+    # # Folder in SharePoint where the new folder will be created
+    # base_folder_path = 'Documents/AI projects'
 
-    # Get the access token
-    access_token = get_access_token(client_id, client_secret, tenant_id)
+    # # Get the access token
+    # access_token = get_access_token(client_id, client_secret, tenant_id)
 
-    # Local folder path and name
-    local_folder_path = pdf_folder_path  # This is the local folder path where your PDFs are located
-    folder_name_to_create = os.path.basename(local_folder_path)
+    # # Local folder path and name
+    # local_folder_path = pdf_folder_path  # This is the local folder path where your PDFs are located
+    # folder_name_to_create = os.path.basename(local_folder_path)
 
-    # The full folder path on SharePoint where you want the new folder to be created
-    folder_path = os.path.join(base_folder_path, cohort, folder_name_to_create).replace('\\', '/')
+    # # The full folder path on SharePoint where you want the new folder to be created
+    # folder_path = os.path.join(base_folder_path, cohort, folder_name_to_create).replace('\\', '/')
 
-    # Create the folder and upload files to SharePoint
-    if access_token:
-        try:
-            upload_folder_to_sharepoint(access_token, site_id, folder_path, local_folder_path)
-            print(f'All files from {local_folder_path} have been uploaded to {folder_path} on SharePoint.')
-        except Exception as e:
-            print(f'An error occurred: {e}')
-    else:
-        print('Could not get access token')
+    # # Create the folder and upload files to SharePoint
+    # if access_token:
+    #     try:
+    #         upload_folder_to_sharepoint(access_token, site_id, folder_path, local_folder_path)
+    #         print(f'All files from {local_folder_path} have been uploaded to {folder_path} on SharePoint.')
+    #     except Exception as e:
+    #         print(f'An error occurred: {e}')
+    # else:
+    #     print('Could not get access token')
 
 
     ##################################
