@@ -185,11 +185,17 @@ def ai_model(file_path, file_name, cohort):
     ##################################
     # ㊙️ Uploading Data to MONGO DB
     ##################################
+
+    user_data_json.pop('host_name')
+    user_data_json.pop('host_site')
+    user_data_json.pop('supervisor')
+
     user = User(**user_data_json)
     user.files = [ file_name ]
     user.cohort = cohort
     user.isValidated = False
     user.isUpdated = False
+
 
     print("㊙️ USER DATA:")
     print(user)
@@ -207,7 +213,7 @@ def ai_model(file_path, file_name, cohort):
     delete_path = os.path.join('content', file_name)
     delete_file_or_folder(delete_path)
 
-    delete_file_or_folder(local_folder_path)
+    # delete_file_or_folder(local_folder_path)
 
     print("Folders and all their contents have been deleted successfully.")
 
