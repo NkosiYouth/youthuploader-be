@@ -50,7 +50,7 @@ def ai_model(file_path, file_name, cohort):
     print(image_file_paths)
 
     ##################################
-    # ⭐ Image Text Model
+    # ⭐ Image Text Model || Retry Required
     ##################################
     print("㊙️ IMAGE TO TEXT MODEL")
     results_list = image_text_model(image_file_paths)
@@ -61,7 +61,6 @@ def ai_model(file_path, file_name, cohort):
     print("㊙️ IMAGE CLASSIFICATION")
     image_classification = identify_document_and_type(results_list)
 
-
     ##################################
     # ㊙️ Consolidate Data
     ##################################
@@ -69,7 +68,7 @@ def ai_model(file_path, file_name, cohort):
     updated_data = consolidated_data
 
     ##################################
-    # ✏️ Combine All ORC
+    # ✏️ Combine All OCR | Retry Required - 2 Tries
     ##################################
     consolidated_text = consolidate_ocr_results_based_on_digitization(updated_data)
     print(consolidated_text)
@@ -87,7 +86,7 @@ def ai_model(file_path, file_name, cohort):
     print(ep_contract_ocr_text)
 
     ##################################
-    # ㊙️ LLM Chains to Extract Data
+    # ㊙️ LLM Chains to Extract Data | Retry Required
     ##################################
     race_and_gender = get_race_and_gender(ee_ocr_text)
     payroll_data = get_pay_roll_data(payroll_ocr_text)
@@ -113,13 +112,15 @@ def ai_model(file_path, file_name, cohort):
     print(merged_text)
 
     ##################################
-    # ㊙️ Extract User Data from String
+    # ㊙️ Extract User Data from String | Retry Required
     ##################################
     output = get_user_output_data(merged_text)
     print(output)
     user_data_str = output['text']
     user_data_json = json.loads(output['text'])
     print(user_data_json)
+    # Todo: Create a user inside MONGO DB... Wait for validation...
+    # We need to put conslidated somwhere...
 
     ##################################
     # ㊙️ Split and Rename PDF
