@@ -10,22 +10,9 @@ load_dotenv()
 
 file_bp = Blueprint('file', __name__)
 
-def retry_process(target, file_path, filename, cohort, retries=5, delay=2):
-    attempt = 0
-    while attempt < retries:
-        try:
-            target(file_path, filename, cohort)
-            print(f"Process for '{filename}' completed successfully.")
-            return
-        except Exception as e:
-            print(f"Error in process for '{filename}': {e}. Retrying...")
-            time.sleep(delay)  # Wait before retrying
-            attempt += 1
-    print(f"Process for '{filename}' failed after {retries} attempts.")
-
 def process_files(uploaded_files_info, cohort):
     for file_info in uploaded_files_info:
-        retry_process(ai_model_script.ai_model, file_info['file_path'], file_info['file_name'], cohort)
+        ai_model_script.ai_model(file_info['file_path'], file_info['file_name'], cohort)
 
 @file_bp.route('/upload', methods=['POST'])
 def upload_file():

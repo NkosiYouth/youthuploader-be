@@ -23,11 +23,15 @@ from .user_data import get_user_output_data
 
 from .split_rename_pdf import extract_page_names, update_page_names_with_user, split_pdf_into_pages, merge_pages_by_name
 
-from .sharepoint import upload_file_to_sharepoint, upload_folder_to_sharepoint, create_folder_in_sharepoint, get_access_token
 
 from .delete_folder import delete_file_or_folder
 
-from app.models import User
+from app.models import User, RawData, FailedDocuments
+
+
+def store_to_failed_documents(pdf_link):
+    raw_data = FailedDocuments(pdf_link)
+    raw_data.save()
 
 def ai_model(file_path, file_name, cohort):
     ##################################
@@ -53,7 +57,14 @@ def ai_model(file_path, file_name, cohort):
     # ⭐ Image Text Model || Retry Required
     ##################################
     print("㊙️ IMAGE TO TEXT MODEL")
-    results_list = image_text_model(image_file_paths)
+
+    try:
+        results_list = image_text_model(image_file_paths)
+    except Exception as e:
+        store_to_failed_documents(file_path)
+        print(f"An error occurred: {e}")
+        print("Exiting main function.")
+        return
 
     ##################################
     # 〽️ Identify Document and Type
@@ -150,39 +161,6 @@ def ai_model(file_path, file_name, cohort):
 
     print(f"The folder path is: {pdf_folder_path}")
 
-    # ##################################
-    # # ㊙️ Upload to SharePoint
-    # ##################################
-    # # Credentials and SharePoint information
-    # client_id = '6ab526e0-c314-4736-bb76-536dc241fe5e'
-    # client_secret = '0ZF8Q~afzsm0T4LQ9jEGJT6s26XZZlp1CKA1idzA'
-    # tenant_id = '825c9d58-d758-4658-a35a-49b607ca99a5'
-    # site_id = 'f9ac8ea8-56b1-4bdb-99d6-64efa51997df'
-
-    # # Folder in SharePoint where the new folder will be created
-    # base_folder_path = 'Documents/AI projects'
-
-    # # Get the access token
-    # access_token = get_access_token(client_id, client_secret, tenant_id)
-
-    # # Local folder path and name
-    # local_folder_path = pdf_folder_path  # This is the local folder path where your PDFs are located
-    # folder_name_to_create = os.path.basename(local_folder_path)
-
-    # # The full folder path on SharePoint where you want the new folder to be created
-    # folder_path = os.path.join(base_folder_path, cohort, folder_name_to_create).replace('\\', '/')
-
-    # # Create the folder and upload files to SharePoint
-    # if access_token:
-    #     try:
-    #         upload_folder_to_sharepoint(access_token, site_id, folder_path, local_folder_path)
-    #         print(f'All files from {local_folder_path} have been uploaded to {folder_path} on SharePoint.')
-    #     except Exception as e:
-    #         print(f'An error occurred: {e}')
-    # else:
-    #     print('Could not get access token')
-
-
     ##################################
     # ㊙️ Uploading Data to MONGO DB
     ##################################
@@ -204,17 +182,16 @@ def ai_model(file_path, file_name, cohort):
     result = user.save()
     print(f"MONGO DB Record ID: {result}")
 
+    raw_data = RawData(**user_data_json)
+    raw_data.user_id = result._id
+    raw_data.save()
+
+    # ##################################
+    # # ㊙️ Upload to SharePoint
+    # ##################################
+
+
     ##################################
     # ㊙️ Delete Files
     ##################################
-    # Delete the folders and all their contents recursively
-    delete_path = os.path.join('uploads', file_name)
-    delete_file_or_folder(delete_path)
-
-    delete_path = os.path.join('content', file_name)
-    delete_file_or_folder(delete_path)
-
-    # delete_file_or_folder(local_folder_path)
-
-    print("Folders and all their contents have been deleted successfully.")
 
