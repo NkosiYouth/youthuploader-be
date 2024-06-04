@@ -14,31 +14,19 @@ def image_text_model(image_file_paths):
 
     results_list = []
 
-    index = 0  # Start from the beginning initially
-    while index < len(image_file_paths):
-        file_path = image_file_paths[index]
+for file_path in image_file_paths:
+    result = client.predict(
+        "PaddleOCR",
+        file_path,
+        api_name="/predict"
+    )
 
-        try:
-            result = client.predict(
-                "PaddleOCR",
-                file_path,
-                api_name="/predict"
-            )
+    # Append the OCR result directly to the results_list if 'result' is already a text string
+    results_list.append(result)
 
-            # Append the OCR result directly to the results_list if 'result' is already a text string
-            results_list.append(result)
+    # Print the OCR result
+    print(f"OCR Result for {file_path}:")
+    print(result)
+    print("---")  # Separator for readability
 
-            # Print the OCR result
-            print(f"OCR Result for {file_path}:")
-            print(result)
-            print("---")  # Separator for readability
-
-            index += 1  # Move to the next file
-
-        except Exception as e:
-            print(f"An error occurred while processing {file_path}: {e}")
-            print("Resuming from the same file...")
-            # If an error occurred, continue with the same file in the next iteration
-            # No need to increment index, it will be the same in the next iteration
-
-    return results_list
+# The results_list now contains the OCR text results from each image, each as a separate element
