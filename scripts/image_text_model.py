@@ -7,7 +7,7 @@ load_dotenv()
 def image_text_model(image_file_paths):
 
     # Replace 'Your_HuggingFace_Token' with your actual Hugging Face token
-    hf_token = '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'
+    hf_token = os.getenv('HFT')
 
     # Initialize the Gradio client with your Hugging Face token
     client = Client("https://nkosiyouth-updated-ocr-image-to-text-2-0.hf.space/--replicas/fluc7/", hf_token=hf_token)
