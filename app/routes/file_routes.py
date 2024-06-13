@@ -2,7 +2,7 @@ from flask import request, jsonify, Blueprint
 import os
 from multiprocessing import Process
 import boto3
-from scripts import ai_model_script
+from app.scripts import ai_model_script
 from dotenv import load_dotenv
 import time
 
