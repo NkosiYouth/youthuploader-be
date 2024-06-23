@@ -24,8 +24,8 @@ from .split_rename_pdf import extract_page_names, update_page_names_with_user, s
 from app.models import User, RawData, FailedDocuments
 
 
-def store_to_failed_documents(pdf_link):
-    raw_data = FailedDocuments(pdf_link)
+def store_to_failed_documents(file_name):
+    raw_data = FailedDocuments(file_name)
     raw_data.save()
 
 def ai_model(file_path, file_name, cohort):
@@ -56,7 +56,7 @@ def ai_model(file_path, file_name, cohort):
     try:
         results_list = image_text_model(image_file_paths)
     except Exception as e:
-        store_to_failed_documents(file_path)
+        store_to_failed_documents(file_name)
         print(f"An error occurred: {e}")
         print("Exiting main function.")
         return
