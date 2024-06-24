@@ -14,7 +14,7 @@ def image_text_model(image_file_paths):
     print(hf_token)
 
     # Initialize the Gradio client with your Hugging Face token
-    client = Client("https://nkosiyouth-ocr-image-to-text.hf.space/--replicas/sszfq/", hf_token=hf_token)
+    client = Client("https://nkosiyouth-ocr-image-to-text-machine-2.hf.space/--replicas/62goc/", hf_token=hf_token)
 
     results_list = []
     max_retries = 10

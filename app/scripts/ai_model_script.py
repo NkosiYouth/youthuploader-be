@@ -177,9 +177,9 @@ def ai_model(file_path, file_name, cohort):
     result = user.save()
     print(f"MONGO DB Record ID: {result}")
 
-    raw_data = RawData(**user_data_json)
-    raw_data.user_id = result._id
-    raw_data.save()
+    # raw_data = RawData(**user_data_json)
+    # raw_data.user_id = result._id
+    # raw_data.save()
 
     # ##################################
     # # ㊙️ Upload to SharePoint
