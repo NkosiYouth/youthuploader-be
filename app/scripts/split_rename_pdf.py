@@ -51,7 +51,7 @@ def split_pdf_into_pages(pdf_data):
 
     return page_files
 
-def merge_pages_by_name(updated_page_names, page_files, user_data):
+def merge_pages_by_name(updated_page_names, page_files, user_data, folder_name):
     # Parse the JSON string into a dictionary to extract user info
     user_data = json.loads(user_data)
     first_name = user_data.get('first_name', '').strip()
@@ -59,7 +59,8 @@ def merge_pages_by_name(updated_page_names, page_files, user_data):
     rsa_id_number = user_data.get('rsa_id_number', '').strip()
 
     # Create the folder name based on the user's information
-    pdf_folder_name = f"{first_name} {last_name} - {rsa_id_number}"
+    # pdf_folder_name = f"{first_name} {last_name} - {rsa_id_number}"
+    pdf_folder_name = folder_name
 
     # Create the directory if it does not exist
     if not os.path.exists(pdf_folder_name):

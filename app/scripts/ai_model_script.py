@@ -139,7 +139,7 @@ def ai_model(file_path, file_name, cohort):
 
     page_files = split_pdf_into_pages(pdf_data)
     # Funct ion to merge the pages by name and save them to PDF files
-    created_file_names = merge_pages_by_name(updated_page_names, page_files, user_data_str)
+    created_file_names = merge_pages_by_name(updated_page_names, page_files, user_data_str , file_name.replace(".pdf", ""))
 
     user_data = json.loads(user_data_str)
 
@@ -149,7 +149,8 @@ def ai_model(file_path, file_name, cohort):
     rsa_id_number = user_data.get('rsa_id_number', '').strip()
 
     # Construct the folder name
-    pdf_folder_name = f"{first_name} {last_name} - {rsa_id_number}"
+    # pdf_folder_name = f"{first_name} {last_name} - {rsa_id_number}"
+    pdf_folder_name = file_name.replace(".pdf", "")
 
     # Get the absolute path of the folder
     pdf_folder_path = os.path.abspath(pdf_folder_name)

@@ -87,6 +87,3 @@ def get_access_token(client_id, client_secret, tenant_id):
 
     # Return the access token
     return response.json().get("access_token")
-
-
-
