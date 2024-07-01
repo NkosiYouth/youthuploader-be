@@ -22,6 +22,7 @@ def verify_and_update_user(user_id):
     try:
         data = request.json
         data['isValidated'] = True
+        data['isUpdated'] = True
         result = User.update_user(user_id, data)
 
         if result:
@@ -62,8 +63,6 @@ def verify_and_update_user(user_id):
 @user_bp.route('/users/<user_id>', methods=['PUT'], endpoint='update_user')
 def update_user(user_id):
     data = request.json
-    print(data)
-    print(user_id)
     result = User.update_user(user_id, data)
     if result:
         return jsonify({"message": "User updated successfully"}), 200
