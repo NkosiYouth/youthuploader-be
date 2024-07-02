@@ -65,7 +65,7 @@ class User:
         if params:
             query.update(params)  # Update query with provided parameters
             if 'isValidated' in params:
-                query['isValidated'] = params['isValidated'] == 'true'
+                query['isValidated'] = params['isValidated'] == True
 
 
         users = list(mongo.db.users.find(query))
