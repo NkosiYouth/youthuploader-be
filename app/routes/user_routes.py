@@ -17,6 +17,11 @@ def create_user():
     return jsonify({"message": "User created successfully", "user_id": user_id}), 201
 
 # Route to verify and update user by id
+from flask import Blueprint, request, jsonify
+import os
+
+user_bp = Blueprint('user_bp', __name__)
+
 @user_bp.route('/users/verify/<user_id>', methods=['PUT'], endpoint='verify_user')
 def verify_and_update_user(user_id):
     try:
@@ -26,30 +31,31 @@ def verify_and_update_user(user_id):
         result = User.update_user(user_id, data)
 
         if result:
-
             data = User.find_by_id(user_id)
 
-            client_id =  os.getenv('CLIENT_ID')
-            client_secret =  os.getenv('CLIENT_SECRET')
-            tenant_id =  os.getenv('TENAT_ID')
-            site_id =  os.getenv('SITE_ID')
+            client_id = os.getenv('CLIENT_ID')
+            client_secret = os.getenv('CLIENT_SECRET')
+            tenant_id = os.getenv('TENAT_ID')
+            site_id = os.getenv('SITE_ID')
 
             access_token = get_access_token(client_id, client_secret, tenant_id)
 
             if access_token:
                 base_folder_path = 'Documents/AI projects'
-                # local_folder_path = pdf_folder_path  # This is the local folder path where your PDFs are located
                 local_folder_path = os.path.join(data['files'][0].replace(".pdf", ""))
                 folder_name_to_create = os.path.basename(local_folder_path)
-                 # The full folder path on SharePoint where you want the new folder to be created
                 folder_path = os.path.join(base_folder_path, data['cohort'], folder_name_to_create).replace('\\', '/')
+
+                # Check if the local folder exists
+                if not os.path.exists(local_folder_path):
+                    return jsonify({"message": "Files on the server not found"}), 404
 
                 upload_folder_to_sharepoint(access_token, site_id, folder_path, local_folder_path)
                 print(f'All files from {local_folder_path} have been uploaded to {folder_path} on SharePoint.')
+                delete_file_or_folder(data['files'][0])
 
             else:
-                    print('Could not get access token')
-                    delete_file_or_folder(data['files'][0])
+                print('Could not get access token')
 
             return jsonify({"message": "User updated successfully"}), 200
 
