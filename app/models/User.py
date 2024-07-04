@@ -29,7 +29,8 @@ class User:
         self.host_site = host_site
         # self.supervisor = supervisor
         # self.host = host
-        self.supervisor = ObjectId(supervisor) if supervisor else None
+        # self.supervisor = ObjectId(supervisor) if supervisor else None
+        self.supervisor = ObjectId(supervisor) if isinstance(supervisor, str) else supervisor if supervisor else None
         self.host = ObjectId(host) if host else None
         self.host_address = ObjectId(host_address) if host else None
         self.employee_contract_signed = employee_contract_signed
