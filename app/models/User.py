@@ -6,7 +6,7 @@ class User:
         from app import mongo
         return mongo
 
-    def __init__(self, cohort=None, title=None, first_name=None, last_name=None, rsa_id_number=None, mobile_number=None, email=None, gender=None, race=None, disabled=None, residential_address=None, tax_number=None, bank_account_number=None, bank_account_type=None, bank_branch_code=None, next_of_kin_name=None, next_of_kin_relationship=None, next_of_kin_mobile_no=None, supervisor=None, host=None, host_address=None, employee_contract_signed=None, work_experience_title=None, monthly_salary=None, start_date=None, end_date=None, isValidated = False, isUpdated = False, files = []):
+    def __init__(self, cohort=None, title=None, first_name=None, last_name=None, rsa_id_number=None, mobile_number=None, email=None, gender=None, race=None, disabled=None, residential_address=None, host_name=None, tax_number=None, bank_account_number=None, bank_account_type=None, bank_branch_code=None, next_of_kin_name=None, next_of_kin_relationship=None, next_of_kin_mobile_no=None, supervisor=None, host=None, host_address=None, employee_contract_signed=None, work_experience_title=None, monthly_salary=None, start_date=None, end_date=None, isValidated = False, isUpdated = False, files = []):
         self.cohort = cohort
         self.title = title
         self.first_name = first_name
@@ -25,6 +25,7 @@ class User:
         self.next_of_kin_name = next_of_kin_name
         self.next_of_kin_relationship = next_of_kin_relationship
         self.next_of_kin_mobile_no = next_of_kin_mobile_no
+        self.host_name - host_name
         # self.supervisor = supervisor
         # self.host = host
         self.supervisor = ObjectId(supervisor) if supervisor else None
