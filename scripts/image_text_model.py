@@ -10,14 +10,19 @@ def image_text_model(image_file_paths):
     hf_token = os.getenv('HFT')
 
     # Initialize the Gradio client with your Hugging Face token
-    client = Client("https://nkosiyouth-ocr-image-to-text.hf.space/--replicas/0prxu/", hf_token=hf_token)
+    client = Client("https://nkosiyouth-ocr-image-to-text-machine-2.hf.space/--replicas/62goc/", hf_token=hf_token)
 
     results_list = []
 
+    root_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+
     index = 0  # Start from the beginning initially
     while index < len(image_file_paths):
-        file_path = image_file_paths[index]
+        file_path = os.path.join(root_folder,image_file_paths[index])
 
+        print("########################################## FILE PATH")
+        print(file_path)
         try:
             result = client.predict(
                 "PaddleOCR",

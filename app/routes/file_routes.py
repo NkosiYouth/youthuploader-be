@@ -10,19 +10,6 @@ load_dotenv()
 
 file_bp = Blueprint('file', __name__)
 
-def retry_process(target, file_path, filename, cohort, retries=5, delay=2):
-    attempt = 0
-    while attempt < retries:
-        try:
-            target(file_path, filename, cohort)
-            print(f"Process for '{filename}' completed successfully.")
-            return
-        except Exception as e:
-            print(f"Error in process for '{filename}': {e}. Retrying...")
-            time.sleep(delay)  # Wait before retrying
-            attempt += 1
-    print(f"Process for '{filename}' failed after {retries} attempts.")
-
 @file_bp.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -51,7 +38,7 @@ def upload_file():
 
         print('㊗️ UPLOADING TO S3')
         upload_pdf_to_s3(file_path, filename)
-        process = Process(target=retry_process, args=(ai_model_script.ai_model, file_path, filename, cohort))
+        process = Process(target=ai_model_script.ai_model, args=(file_path, filename, cohort))
         processes.append(process)
         uploaded_files_info.append({'file_name': filename, 'file_path': file_path, 'cohort': cohort})
 
